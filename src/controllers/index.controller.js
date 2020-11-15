@@ -10,7 +10,6 @@ database.connect();
 const getTorneos = async (req, res) => {
   try {
     const response = await database.query("select * from torneos");
-    console.log(response.rows);
     res.status(200).json(response.rows);
   } catch (error) {
     console.log(error);
@@ -19,8 +18,9 @@ const getTorneos = async (req, res) => {
 
 const getCategorias = async (req, res) => {
   try {
-    const response = await database.query("select * from categoria");
-    console.log(response.rows);
+    const text = "select * from categoria where torneo_id=$1";
+    const values = [req.params.id];
+    const response = await database.query(text, values);    
     res.status(200).json(response.rows);
   } catch (error) {
     console.log(error);
