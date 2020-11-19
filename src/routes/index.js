@@ -1,9 +1,13 @@
 const { Router } = require("express");
 const router = Router();
 
-const { getTorneos, getCategorias } = require("../controllers/index.controller");
+const { getTorneos, getCategorias, getCuadros, getGrupos, getPartidosCuadro, getPartidosGrupo } = require("../controllers/index.controller");
 
 router.get("/torneos", getTorneos);
 router.get("/categorias/:id", getCategorias);
+router.get("/cuadros/:id", getCuadros);
+router.get("/grupos/:id", getGrupos);
+router.get("/partidoscuadro/:id", getPartidosCuadro);
+router.get("/partidosgrupo/:id", getPartidosGrupo);
 
 module.exports = router;

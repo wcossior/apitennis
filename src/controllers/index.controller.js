@@ -27,7 +27,55 @@ const getCategorias = async (req, res) => {
   }
 }
 
+const getGrupos = async (req, res) => {
+  try {
+    const text = "select * from grupos where categorium_id=$1";
+    const values = [req.params.id];
+    const response = await database.query(text, values);    
+    res.status(200).json(response.rows);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getCuadros = async (req, res) => {
+  try {
+    const text = "select * from cuadros where categorium_id=$1";
+    const values = [req.params.id];
+    const response = await database.query(text, values);    
+    res.status(200).json(response.rows);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getPartidosCuadro = async (req, res) => {
+  try {
+    const text = "select * from partidos, cuadros where partidos.cuadro_id=cuadros.id and cuadros.categorium_id=$1";
+    const values = [req.params.id];
+    const response = await database.query(text, values);    
+    res.status(200).json(response.rows);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getPartidosGrupo = async (req, res) => {
+  try {
+    const text = "select * from partidos, grupos where partidos.grupo_id=grupos.id and grupos.categorium_id=$1";
+    const values = [req.params.id];
+    const response = await database.query(text, values);
+    res.status(200).json(response.rows);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   getTorneos,
   getCategorias,
+  getCuadros,
+  getGrupos,
+  getPartidosGrupo,
+  getPartidosCuadro,
 }
