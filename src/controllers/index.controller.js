@@ -48,21 +48,24 @@ const getCuadros = async (req, res) => {
     console.log(error);
   }
 }
-
+// select etapa, hora_inicio, jugadors.nombre as jug1 from partidos, cuadros, jugadors where partidos.cuadro_id=cuadros.id and jugadors.id=partidos.jugador_uno_id and cuadros.categorium_id=$1
+// select partidos.id, partidos.jugador_uno_id, partidos.jugador_dos_id, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos inner join jugadors jugadores1 on jugadores1.id=partidos.jugador_uno_id inner join jugadors jugadores2 on jugadores2.id=partidos.jugador_dos_id
+//select etapa, hora_inicio, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, cuadros, jugadors jugadores1, jugadors jugadores2 where partidos.cuadro_id=cuadros.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and cuadros.categorium_id=$1 
 const getPartidosCuadro = async (req, res) => {
   try {
-    const text = "select * from partidos, cuadros where partidos.cuadro_id=cuadros.id and cuadros.categorium_id=$1";
+    const text = "select etapa, hora_inicio, partidos.jugador_uno_id, partidos.jugador_dos_id, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, cuadros, jugadors jugadores1, jugadors jugadores2 where partidos.cuadro_id=cuadros.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and cuadros.categorium_id=$1 ";
     const values = [req.params.id];
-    const response = await database.query(text, values);    
+    const response = await database.query(text, values); 
     res.status(200).json(response.rows);
   } catch (error) {
     console.log(error);
   }
 }
+//select * from partidos, grupos where partidos.grupo_id=grupos.id and grupos.categorium_id=$1
 
 const getPartidosGrupo = async (req, res) => {
   try {
-    const text = "select * from partidos, grupos where partidos.grupo_id=grupos.id and grupos.categorium_id=$1";
+    const text = "select grupos.nombre, hora_inicio, partidos.jugador_uno_id, partidos.jugador_dos_id, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, grupos, jugadors jugadores1, jugadors jugadores2 where partidos.grupo_id=grupos.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and grupos.categorium_id=$1 ";
     const values = [req.params.id];
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
