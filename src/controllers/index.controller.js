@@ -20,7 +20,7 @@ const getCategorias = async (req, res) => {
   try {
     const text = "select * from categoria where torneo_id=$1";
     const values = [req.params.id];
-    const response = await database.query(text, values);    
+    const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
     console.log(error);
@@ -31,7 +31,7 @@ const getGrupos = async (req, res) => {
   try {
     const text = "select * from grupos where categorium_id=$1";
     const values = [req.params.id];
-    const response = await database.query(text, values);    
+    const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
     console.log(error);
@@ -42,7 +42,7 @@ const getCuadros = async (req, res) => {
   try {
     const text = "select * from cuadros where categorium_id=$1";
     const values = [req.params.id];
-    const response = await database.query(text, values);    
+    const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
     console.log(error);
@@ -55,7 +55,7 @@ const getPartidosCuadro = async (req, res) => {
   try {
     const text = "select etapa, score_jugador1, score_jugador2, hora_inicio, partidos.jugador_uno_id, partidos.jugador_dos_id, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, cuadros, jugadors jugadores1, jugadors jugadores2 where partidos.cuadro_id=cuadros.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and cuadros.categorium_id=$1 ";
     const values = [req.params.id];
-    const response = await database.query(text, values); 
+    const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
     console.log(error);
@@ -74,6 +74,19 @@ const getPartidosGrupo = async (req, res) => {
   }
 }
 
+const updatePartidos = async (req, res) => {
+  try {
+    const text = "update partidos set score_jugador1=$1, score_jugador2=$2 where partidos.id=$3";
+    const partidoId = parseInt([req.params.id]);
+    const partidoScoreJug1 = parseInt([req.params.scoreJug1]);
+    const partidoScoreJug2 = parseInt([req.params.scoreJug2]);
+
+    const response = await database.query(text, [partidoScoreJug1, partidoScoreJug2, partidoId]);
+    res.status(200).json("score actualizado");
+  } catch (error) {
+    console.log(error);
+  }
+}
 module.exports = {
   getTorneos,
   getCategorias,
@@ -81,4 +94,5 @@ module.exports = {
   getGrupos,
   getPartidosGrupo,
   getPartidosCuadro,
+  updatePartidos
 }
