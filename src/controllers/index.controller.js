@@ -91,29 +91,14 @@ const updatePartidos = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const role = req.body.role;
+    const user = req.body.user;
     const passId = req.body.password;
-    var response;
-    var name = "";
-    var email = "";
-    var text;
-    switch (role) {
-      case "Jugador":
-        name = req.body.nombre;
-        text = "select * from users where nombre=$1 and state=1";
-        response = await database.query(text, [name]);
-        break;
-      default:
-        email = req.body.email;
-        response = await database.query(text, [email]);
-        text = "select * from users where email=$1 and state=1";
-        break;
-    }
-
+    var text = "select * from users where (nombre=$1 or email=$1) and state=1";
+    var response = await database.query(text, [user]);
     if (response.rows.length != 0) {
 
-      const text = `select * from users where ${name != "" ? "nombre" : "email"}=$1 and password=$2`;
-      const datos = await database.query(text, [name != "" ? name : email, passId]);
+      const text = `select * from users where (nombre=$1 or email=$1) and password=$2`;
+      const datos = await database.query(text, [user, passId]);
 
       if (datos.rows.length != 0) {
         res.status(200).json(datos.rows);
