@@ -93,7 +93,7 @@ const login = async (req, res) => {
   try {
     const user = req.body.user;
     const passId = req.body.password;
-    print(user+" "+passId);
+    console.log(user+" "+passId);
 
     var text = "select * from users where (nombre=$1 or email=$1) and state=1";
     var response = await database.query(text, [user]);
