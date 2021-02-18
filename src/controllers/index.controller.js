@@ -93,7 +93,7 @@ const login = async (req, res) => {
   try {
     const user = req.body.user;
     const passId = req.body.password;
-    console.log(user+" "+passId);
+    console.log(user + " " + passId);
 
     var text = "select * from users where (nombre=$1 or email=$1) and state=1";
     var response = await database.query(text, [user]);
@@ -105,15 +105,15 @@ const login = async (req, res) => {
       if (datos.rows.length != 0) {
         res.status(200).json(datos.rows);
       } else {
-        res.status(404).send("Nombre o constraseña incorrectos");
+        res.status(404).send({ msg: "Nombre o constraseña incorrectos" });
       }
 
     } else {
-      res.status(404).send("El usuario no existe");
+      res.status(404).send({ msg: "El usuario no existe" });
     }
 
   } catch (e) {
-    res.status(500).send("Ocurrio un error");
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 
