@@ -103,7 +103,7 @@ const login = async (req, res) => {
       const datos = await database.query(text, [user, passId]);
 
       if (datos.rows.length != 0) {
-        res.status(200).json(datos.rows);
+        res.status(200).json(datos.rows[0]);
       } else {
         res.status(404).send({ msg: "Nombre o constraseña incorrectos" });
       }
