@@ -88,6 +88,31 @@ const updatePartidos = async (req, res) => {
   }
 }
 
+const newUser = async (req, res) => {
+  try {
+    const ci = req.body.ci;
+    const nombre = req.body.nombre;
+    const email = req.body.email;
+    const password = req.body.password;
+    const role = req.body.role;
+    var text = "select * from users where ci=$1";
+    var response = await database.query(text, [ci]);
+
+    if(response.rows.length!=0){
+      return res.status(400).json({ msg: "Esta cuenta ya existe" });
+    }else{
+      var text = "insert into users values ($1, $2, $3, $4, $5, $6)";
+      var response = await database.query(text, [ci, nombre, email, password, 1, role]);
+      res.status(200).json({ msg: "Cuenta creada exitosamente!" });
+    }
+  } catch (e) {
+    res.status(500).send({
+      msg: "Ocurrio un error"
+    });
+    next(e);
+  }
+}
+
 
 const login = async (req, res) => {
   try {
@@ -125,5 +150,6 @@ module.exports = {
   getPartidosGrupo,
   getPartidosCuadro,
   updatePartidos,
-  login
+  newUser,
+  login,
 }
