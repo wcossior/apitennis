@@ -102,7 +102,7 @@ const newUser = async (req, res) => {
       return res.status(400).json({ msg: "Esta cuenta ya existe" });
     }else{
       var text = "insert into users values ($1, $2, $3, $4, $5, $6)";
-      var response = await database.query(text, [ci, nombre, email, password, 1, role]);
+      var response = await database.query(text, [ci, nombre, email, password, 1, "Jugador"]);
       res.status(200).json({ msg: "Cuenta creada exitosamente!" });
     }
   } catch (e) {
