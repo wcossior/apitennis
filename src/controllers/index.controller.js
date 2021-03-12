@@ -142,6 +142,17 @@ const login = async (req, res) => {
   }
 }
 
+const getProg = async (req, res) => {
+  try {
+    const text = "select * from programacion where torneo_id=$1";
+    const values = [req.params.id];
+    const response = await database.query(text, values);
+    res.status(200).json(response.rows);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   getTorneos,
   getCategorias,
@@ -152,4 +163,5 @@ module.exports = {
   updatePartidos,
   newUser,
   login,
+  getProg
 }

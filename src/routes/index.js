@@ -1,9 +1,10 @@
 const { Router } = require("express");
 const router = Router();
 
-const { getTorneos, getCategorias, getCuadros, getGrupos, getPartidosCuadro, getPartidosGrupo, updatePartidos, login, newUser } = require("../controllers/index.controller");
+const { getTorneos, getCategorias, getCuadros, getGrupos, getPartidosCuadro, getPartidosGrupo, updatePartidos, login, newUser, getProg } = require("../controllers/index.controller");
 
 router.get("/torneos", getTorneos);
+router.get("/programacion/:id", getProg);
 router.get("/categorias/:id", getCategorias);
 router.get("/cuadros/:id", getCuadros);
 router.get("/grupos/:id", getGrupos);
