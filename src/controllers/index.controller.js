@@ -154,7 +154,6 @@ const login = async (req, res) => {
       let match = await bcrypt.compare(passId, user.password);
       if (match) {
         let tokenReturn = await token.encode(user.ci);
-        console.log("Entre perra" + tokenReturn);
         res.status(200).json({ user, tokenReturn });
       } else {
         res.status(404).send({
