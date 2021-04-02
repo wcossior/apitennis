@@ -97,8 +97,8 @@ const newUser = async (req, res) => {
     const nombre = req.body.nombre;
     const email = req.body.email;
     var password = req.body.password;
-    var text = "select * from users where ci=$1";
-    var response = await database.query(text, [ci]);
+    var text = "select * from users where email=$1";
+    var response = await database.query(text, [email]);
 
     if (response.rows.length != 0) {
       return res.status(400).json({ msg: "Este email ya esta en uso" });
