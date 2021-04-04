@@ -101,7 +101,7 @@ const newUser = async (req, res) => {
     var response = await database.query(text, [email]);
 
     if (response.rows.length != 0) {
-      return res.status(400).json({ msg: "Este email ya esta en uso" });
+      res.status(400).json({ msg: "Este email ya esta en uso" });
     } else {
       var text = "insert into users values ($1, $2, $3, $4, $5, $6)";
       password = await bcrypt.hash(password, 10);
