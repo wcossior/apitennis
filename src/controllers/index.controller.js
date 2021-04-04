@@ -157,12 +157,12 @@ const login = async (req, res) => {
         res.status(200).json({ user, tokenReturn });
       } else {
         res.status(404).send({
-          msg: "Contraseña incorrecta"
+          msg: "Correo o Contraseña incorrectos"
         });
       }
     }
     else {
-      res.status(404).send({ msg: "El usuario no existe" });
+      res.status(404).send({ msg: "Correo o Contraseña incorrectos" });
     }
   }
   catch (e) {
