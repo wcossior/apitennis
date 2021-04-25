@@ -128,6 +128,17 @@ const newSet = async (req, res) => {
     res.status(500).send({ msg: "Ocurrio un error"+error });
   }
 }
+const deleteSet = async (req, res) => {
+  try {
+    const text = "delete from sets where id=$1";
+    const value = [req.params.id];
+
+    await database.query(text, value);
+    res.status(200).json("Score eliminado");
+  } catch (error) {
+    res.status(500).send({ msg: "Ocurrio un error"+error });
+  }
+}
 
 const updateSet = async (req, res) => {
   try {
@@ -250,4 +261,5 @@ module.exports = {
   getSets,
   newSet,
   updateSet,
+  deleteSet,
 }
