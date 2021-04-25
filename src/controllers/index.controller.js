@@ -94,7 +94,7 @@ const getCuadros = async (req, res) => {
 
 const getPartidosCuadro = async (req, res) => {
   try {
-    const text = "select partidos.id, partidos.numero_cancha, score_jug1_set, score_jug2_set, etapa, score_jugador1, score_jugador2, hora_inicio, partidos.jugador_uno_id, partidos.jugador_dos_id, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, cuadros, jugadors jugadores1, jugadors jugadores2 where partidos.cuadro_id=cuadros.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and cuadros.categorium_id=$1 ";
+    const text = "select partidos.id, partidos.numero_cancha, etapa, score_jugador1, score_jugador2, hora_inicio, partidos.jugador_uno_id, partidos.jugador_dos_id, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, cuadros, jugadors jugadores1, jugadors jugadores2 where partidos.cuadro_id=cuadros.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and cuadros.categorium_id=$1 ";
     const values = [req.params.id];
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
