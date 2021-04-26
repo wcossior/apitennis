@@ -120,7 +120,7 @@ const newSet = async (req, res) => {
     const partidoId = parseInt([req.body.idPartido]);
     const scoreJug1 = parseInt([req.body.scoreJug1]);
     const scoreJug2 = parseInt([req.body.scoreJug2]);
-    const nroSet = parseInt([req.body.nroSet]);
+    const nroSet = req.body.nroSet;
 
     await database.query(text, [id, partidoId, scoreJug1, scoreJug2, nroSet]);
     res.status(200).json("Score guardado");
