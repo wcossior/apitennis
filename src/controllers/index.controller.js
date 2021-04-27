@@ -123,9 +123,9 @@ const newSet = async (req, res) => {
     const nroSet = req.body.nroSet;
 
     await database.query(text, [id, partidoId, scoreJug1, scoreJug2, nroSet]);
-    res.status(200).json("Score guardado");
+    res.status(200).json({ msg: "Score guardado" });
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
+    res.status(500).send({ msg: "Ocurrio un error"});
   }
 }
 const deleteSet = async (req, res) => {
@@ -134,7 +134,7 @@ const deleteSet = async (req, res) => {
     const value = [req.params.id];
 
     await database.query(text, value);
-    res.status(200).json("Score eliminado");
+    res.status(200).json({ msg: "Score eliminado" });
   } catch (error) {
     res.status(500).send({ msg: "Ocurrio un error" + error });
   }
@@ -149,9 +149,9 @@ const updateSet = async (req, res) => {
     const idSet = parseInt(req.body.idSet);
 
     await database.query(text, [scoreJug1, scoreJug2, nroSet, idSet]);
-    res.status(200).json("Score actualizado");
+    res.status(200).json({ msg: "Score actualizado" });
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" });
+    res.status(500).send({ msg: "Ocurrio un error "+error });
   }
 }
 
@@ -174,7 +174,7 @@ const updatePartidos = async (req, res) => {
     const partidoScoreJug2 = parseInt([req.params.scoreJug2]);
 
     const response = await database.query(text, [partidoScoreJug1, partidoScoreJug2, partidoId]);
-    res.status(200).json("Score actualizado");
+    res.status(200).json({ msg: "Score actualizado" });
   } catch (error) {
     res.status(500).send({ msg: "Ocurrio un error" });
   }
