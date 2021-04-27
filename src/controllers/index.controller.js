@@ -117,9 +117,9 @@ const newSet = async (req, res) => {
   try {
     const text = "insert into sets values ($1, $2, $3, $4, $5)";
     var id = new Date().valueOf();
-    const partidoId = parseInt([req.body.idPartido]);
-    const scoreJug1 = parseInt([req.body.scoreJug1]);
-    const scoreJug2 = parseInt([req.body.scoreJug2]);
+    const partidoId = parseInt(req.body.idPartido);
+    const scoreJug1 = parseInt(req.body.scoreJug1);
+    const scoreJug2 = parseInt(req.body.scoreJug2);
     const nroSet = req.body.nroSet;
 
     await database.query(text, [id, partidoId, scoreJug1, scoreJug2, nroSet]);
@@ -143,10 +143,10 @@ const deleteSet = async (req, res) => {
 const updateSet = async (req, res) => {
   try {
     const text = "update sets set score_jug_1=$1, score_jug_2=$2, nro_set=$3 where id=$4";
-    const scoreJug1 = parseInt([req.body.scoreJug1]);
-    const scoreJug2 = parseInt([req.body.scoreJug2]);
-    const nroSet = parseInt([req.body.nroSet]);
-    const idSet = parseInt([req.body.idSet]);
+    const scoreJug1 = parseInt(req.body.scoreJug1);
+    const scoreJug2 = parseInt(req.body.scoreJug2);
+    const nroSet = req.body.nroSet;
+    const idSet = parseInt(req.body.idSet);
 
     await database.query(text, [scoreJug1, scoreJug2, nroSet, idSet]);
     res.status(200).json("Score actualizado");
