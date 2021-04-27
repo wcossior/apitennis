@@ -169,9 +169,9 @@ const getPartidosGrupo = async (req, res) => {
 const updatePartidos = async (req, res) => {
   try {
     const text = "update partidos set score_jug1_set=$1, score_jug2_set=$2 where partidos.id=$3";
-    const partidoId = parseInt([req.params.id]);
-    const partidoScoreJug1 = parseInt([req.params.scoreJug1]);
-    const partidoScoreJug2 = parseInt([req.params.scoreJug2]);
+    const partidoId = parseInt(req.params.id);
+    const partidoScoreJug1 = parseInt(req.params.scoreJug1);
+    const partidoScoreJug2 = parseInt(req.params.scoreJug2);
 
     const response = await database.query(text, [partidoScoreJug1, partidoScoreJug2, partidoId]);
     res.status(200).json({ msg: "Score actualizado" });
