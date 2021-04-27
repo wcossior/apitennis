@@ -136,7 +136,7 @@ const deleteSet = async (req, res) => {
     await database.query(text, value);
     res.status(200).json({ msg: "Score eliminado" });
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 
@@ -151,7 +151,7 @@ const updateSet = async (req, res) => {
     await database.query(text, [scoreJug1, scoreJug2, nroSet, idSet]);
     res.status(200).json({ msg: "Score actualizado" });
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error "+error });
+    res.status(500).send({ msg: "Ocurrio un error " });
   }
 }
 
@@ -199,7 +199,7 @@ const newUser = async (req, res) => {
       res.status(200).json({ msg: "Cuenta creada exitosamente!" });
     }
   } catch (e) {
-    res.status(500).send({ msg: "Ocurrio un error" + e });
+    res.status(500).send({ msg: "Ocurrio un error"});
   }
 }
 
@@ -228,7 +228,7 @@ const login = async (req, res) => {
     }
   }
   catch (e) {
-    res.status(500).send({ msg: "Ocurrio un error" + e });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 
 }
