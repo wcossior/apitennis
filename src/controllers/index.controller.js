@@ -115,12 +115,12 @@ const getNotifications = async (req, res) => {
 
 const getCategorias = async (req, res) => {
   try {
-    const text = "select * from categoria where torneo_id=$1 and categoria_type=Singles";
+    const text = "select * from categoria where torneo_id=$1 and categoria_type='Singles'";
     const values = [req.params.id];
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" });
+    res.status(500).send({ msg: "Ocurrio un error" + error });
   }
 }
 
