@@ -59,29 +59,59 @@ const getTorneo = async (req, res) => {
     res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
+//dgh3YaYC8aw:APA91bEvgFcc5Uena0STxfqWUhQRLHlWjEdxXVEC69Yv4vavlYazPUv_luvnArg7k9aGDAEm7-B60_1cyCBgg8OUmk1PCkfg-rj5olWix7A-JcJp1trvY6uppzM-YNBle0jYwlq0hFag
+//cc2CUrcIkow:APA91bFNYav7wb4a-IVb83TtvJP17MtbCZW_iAHN4VgHXUQQqBXSZ95iYZfuetxUvhT-m3Fi3a-6BBqaVi90WwvMXNdfeLUtNrtooKtgunJ6idlvP9xKdPB9K5g5HIjlvesgg-G0rg9j
 
 const sendMessage = async (req, res) => {
-  var message = {
-    // registration_ids: ['ckcNPj4mieE:APA91bGhOCzdyCucv6LT6ev_py2XbDkIKsQoVw4khmdlgyWkUpngYN2vda9_h_Qg5Z-gNgTnAN5zMELWgak9nyOC8HKpkTc7CcOsD9hbe_rNBai60Lw8psZLuxkrfUhvbDOI75231G3y','cja-cxm_gHE:APA91bGeWG-Y4zVqHNw38VXmKw2ZC7FilnicMTzR9783UIDibFStI512teXEM0CmzDlU-uFFvvxF2hmGRKUvlNIDJwucHVe8glkQF8X5_ZCyHYyOGlwdoReSdhyy4CAcKwDbuibb4dB7'],
-    to: 'ckcNPj4mieE:APA91bGhOCzdyCucv6LT6ev_py2XbDkIKsQoVw4khmdlgyWkUpngYN2vda9_h_Qg5Z-gNgTnAN5zMELWgak9nyOC8HKpkTc7CcOsD9hbe_rNBai60Lw8psZLuxkrfUhvbDOI75231G3y',
-    notification: {
-      title: 'Torneo de tenis',
-      body: 'Falta 5 partidos para tu juego'
-    },
-    data: {
-      comida: 'quiero pollo chester',
-    }
-  };
+  try {
+    const description = req.body.description;
+    const title = req.body.title;
+    const dispositivo = req.body.dispositivo;
+    var message = {
+      // registration_ids: ['ckcNPj4mieE:APA91bGhOCzdyCucv6LT6ev_py2XbDkIKsQoVw4khmdlgyWkUpngYN2vda9_h_Qg5Z-gNgTnAN5zMELWgak9nyOC8HKpkTc7CcOsD9hbe_rNBai60Lw8psZLuxkrfUhvbDOI75231G3y','cja-cxm_gHE:APA91bGeWG-Y4zVqHNw38VXmKw2ZC7FilnicMTzR9783UIDibFStI512teXEM0CmzDlU-uFFvvxF2hmGRKUvlNIDJwucHVe8glkQF8X5_ZCyHYyOGlwdoReSdhyy4CAcKwDbuibb4dB7'],
+      to: dispositivo,
+      notification: {
+        title: title,
+        body: description
+      },
+      data: {
+        comida: 'quiero pollo chester',
+      }
+    };
 
-  fcm.send(message, function (err, response) {
-    if (err) {
-      console.log("Something has gone wrong!");
-    } else {
-      console.log("Successfully sent with response: ", response);
-    }
-  });
+    fcm.send(message, async function (err, response) {
+      if (err) {
+        res.status(500).send({ msg: "Ocurrio un error" });
+      } else {
+        var data = JSON.parse(response);
+        var id = data.results[0].message_id;
+        var enviado = new Date();
+        const text = "insert into notificaciones values ($1, $2, $3, $4, $5, $6, $7, $8)";
+
+        const id_torneo = parseInt(req.body.id_torneo);
+        const id_categoria = parseInt(req.body.id_categoria);
+        // const id_partido = parseInt(req.body.id_partido);
+
+        await database.query(text, [id, id_torneo, id_categoria, 0, description, title, dispositivo, enviado]);
+        res.status(200).json({ msg: "Notificación enviada" });
+      }
+    });
+
+  } catch (error) {
+    res.status(500).send({ msg: "Ocurrio un error " + error });
+  }
 
 }
+
+const getNotifications = async (req, res) => {
+  try {
+    const response = await database.query("select * from notificaciones");
+    res.status(200).json(response.rows);
+  } catch (error) {
+    res.status(500).send({ msg: "Ocurrio un error" });
+  }
+}
+
 const getCategorias = async (req, res) => {
   try {
     const text = "select * from categoria where torneo_id=$1";
@@ -284,4 +314,5 @@ module.exports = {
   newSet,
   updateSet,
   deleteSet,
+  getNotifications,
 }
