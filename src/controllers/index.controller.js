@@ -2,6 +2,10 @@ const { Client } = require("pg");
 const bcrypt = require('bcryptjs');
 const token = require("../services/token");
 
+var FCM = require('fcm-node');
+var serverKey = 'AAAAZqt7s_E:APA91bHjDRT84dJeYeN9OzIgH7VHCEkn9E1vBxko5eStVwJMmKeUyXZqe2DC20UdCpVFVNHriIZho3HIac0q0446ihcDFq_pIE2ZjC0RfIw7Q2DOTxx-yIbdeb-WR0wRSvo8XpR_W8oB'; //put your server key here
+var fcm = new FCM(serverKey);
+
 
 const database = new Client({
   connectionString: "postgres://ucralauolpfuxc:38afec102b9182a320e2c9afe515a1b6723d307eda29dc7f175037cb693b9649@ec2-54-164-134-207.compute-1.amazonaws.com:5432/d8god16o1u8tk",
@@ -56,7 +60,26 @@ const getTorneo = async (req, res) => {
   }
 }
 
-const newMessage = async (req, res) => {
+const sendMessage = async (req, res) => {
+  var message = {
+    // registration_ids: ['ckcNPj4mieE:APA91bGhOCzdyCucv6LT6ev_py2XbDkIKsQoVw4khmdlgyWkUpngYN2vda9_h_Qg5Z-gNgTnAN5zMELWgak9nyOC8HKpkTc7CcOsD9hbe_rNBai60Lw8psZLuxkrfUhvbDOI75231G3y','cja-cxm_gHE:APA91bGeWG-Y4zVqHNw38VXmKw2ZC7FilnicMTzR9783UIDibFStI512teXEM0CmzDlU-uFFvvxF2hmGRKUvlNIDJwucHVe8glkQF8X5_ZCyHYyOGlwdoReSdhyy4CAcKwDbuibb4dB7'],
+    to: 'ckcNPj4mieE:APA91bGhOCzdyCucv6LT6ev_py2XbDkIKsQoVw4khmdlgyWkUpngYN2vda9_h_Qg5Z-gNgTnAN5zMELWgak9nyOC8HKpkTc7CcOsD9hbe_rNBai60Lw8psZLuxkrfUhvbDOI75231G3y',
+    notification: {
+      title: 'Torneo de tenis',
+      body: 'Falta 5 partidos para tu juego'
+    },
+    data: {
+      comida: 'quiero pollo chester',
+    }
+  };
+
+  fcm.send(message, function (err, response) {
+    if (err) {
+      console.log("Something has gone wrong!");
+    } else {
+      console.log("Successfully sent with response: ", response);
+    }
+  });
 
 }
 const getCategorias = async (req, res) => {
@@ -125,7 +148,7 @@ const newSet = async (req, res) => {
     await database.query(text, [id, partidoId, scoreJug1, scoreJug2, nroSet]);
     res.status(200).json({ msg: "Score guardado" });
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error"});
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 const deleteSet = async (req, res) => {
@@ -199,7 +222,7 @@ const newUser = async (req, res) => {
       res.status(200).json({ msg: "Cuenta creada exitosamente!" });
     }
   } catch (e) {
-    res.status(500).send({ msg: "Ocurrio un error"});
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 
@@ -256,7 +279,7 @@ module.exports = {
   login,
   getProg,
   getTorneo,
-  newMessage,
+  sendMessage,
   getSets,
   newSet,
   updateSet,
