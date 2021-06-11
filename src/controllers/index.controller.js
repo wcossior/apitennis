@@ -38,16 +38,9 @@ const getCategorias = async (req, res) => {
 const getPartidosCuadro = async (req, res) => {
   try {
     const values = [req.params.id];
-    const consulta = "select categoria_type from categoria where id=$1";
-    const resp = await database.query(consulta, values);
-    if (resp.rows[0].categoria_type == "Singles") {
-      const text = "select partidos.id, partido_type, hora_inicio, hora_inico_mv, hora_fin, numero_cancha, ronda_torneo_id, marcador, partido_terminado, cuadros.etapa, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, cuadros, jugadors jugadores1, jugadors jugadores2 where partidos.cuadro_id=cuadros.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and cuadros.categorium_id=$1 order by partidos.id";
-      const response = await database.query(text, values);
-      res.status(200).json(response.rows);
-    } else {
-      res.status(200).json([]);
-    }
-
+    const text = "select partidos.id, partido_type, hora_inicio, hora_inico_mv, hora_fin, numero_cancha, ronda_torneo_id, marcador, partido_terminado, cuadros.etapa, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, cuadros, jugadors jugadores1, jugadors jugadores2 where partidos.cuadro_id=cuadros.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and cuadros.categorium_id=$1 order by partidos.id";
+    const response = await database.query(text, values);
+    res.status(200).json(response.rows);
   } catch (error) {
     res.status(500).send({ msg: "Ocurrio un error" + error });
   }
@@ -79,16 +72,9 @@ const fullTime = async (req, res) => {
 const getPartidosGrupo = async (req, res) => {
   try {
     const values = [req.params.id];
-    const consulta = "select categoria_type from categoria where id=$1";
-    const resp = await database.query(consulta, values);
-    if (resp.rows[0].categoria_type == "Singles") {
-      const text = "select partidos.id, partido_type, hora_inicio, hora_inico_mv, hora_fin, numero_cancha, ronda_torneo_id, marcador, partido_terminado, grupos.nombre, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, grupos, jugadors jugadores1, jugadors jugadores2 where partidos.grupo_id=grupos.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and grupos.categorium_id=$1 order by grupos.nombre";
-      const response = await database.query(text, values);
-      res.status(200).json(response.rows);
-    } else {
-      res.status(200).json([]);
-    }
-
+    const text = "select partidos.id, partido_type, hora_inicio, hora_inico_mv, hora_fin, numero_cancha, ronda_torneo_id, marcador, partido_terminado, grupos.nombre, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, grupos, jugadors jugadores1, jugadors jugadores2 where partidos.grupo_id=grupos.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and grupos.categorium_id=$1 order by grupos.nombre";
+    const response = await database.query(text, values);
+    res.status(200).json(response.rows);
   } catch (error) {
     res.status(500).send({ msg: "Ocurrio un error" + error });
   }
