@@ -15,196 +15,9 @@ const database = new Client({
 
 database.connect();
 
-// function contador () {
-//   try {
-//     const description = "Cada minuto";
-//     const title = "Mensaje programado js";
-//     const dispositivo = 'cja-cxm_gHE:APA91bGeWG-Y4zVqHNw38VXmKw2ZC7FilnicMTzR9783UIDibFStI512teXEM0CmzDlU-uFFvvxF2hmGRKUvlNIDJwucHVe8glkQF8X5_ZCyHYyOGlwdoReSdhyy4CAcKwDbuibb4dB7';
-//     var message = {
-//       to: dispositivo,
-//       notification: {
-//         title: title,
-//         body: description
-//       },
-//       data: {
-//         comida: 'quiero pollo chester',
-//       }
-//     };
-
-//     fcm.send(message, async function (err, response) {
-//       if (err) {
-//         console.log("Hubo un error "+ err);
-//       } else {
-//         console.log("Mensaje enviado");
-//       }
-//     });
-
-//   } catch (error) {
-//     console.log("Hubo un error "+ error);
-//   }
-// }
-// setInterval(contador, 60000);
-
-
-
-
-const notificarSgtJug = async (req, res) => {
-  try {
-    // const text = "select partidos.id, partido_type, partidos.hora_inicio, hora_fin, hora_inico_mv, numero_cancha, ronda_torneo_id, partido_terminado, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, ronda_torneos, jugadors jugadores1, jugadors jugadores2 where ronda_torneos.id=partidos.ronda_torneo_id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and ronda_torneos.torneo_id=$1 ";
-    var text = "select numero_cancha, ronda_torneos.numero from partidos, ronda_torneos where partidos.ronda_torneo_id=ronda_torneos.id and partidos.id=$1 ";
-    var idPartido = [req.body.idPartido];
-    var idTorneo = [req.body.idTorneo];
-    var response = await database.query(text, idPartido);
-    var cancha = response.rows[0].numero_cancha;
-    var horario = response.rows[0].numero;
-    
-    text = "select * from ronda_torneos where torneo_id=$1 ";
-    response = await database.query(text, idTorneo);
-    var cantidadHorarios = response.rows.length;
-
-    for (let index = horario; index < cantidadHorarios; index++) {
-      
-    }
-
-    horario = parseInt(horario) + 1;
-    text = "select jugador_uno_id, jugador_dos_id from partidos where numero_cancha=$1 and ronda_torneo_id=$2 ";
-    response = await database.query(text, [cancha, horario]);
-    var jug1 = response.rows[0].jugador_uno_id;
-    var jug2 = response.rows[0].jugador_dos_id;
-
-    text = "select nombre from jugadors where id=$1 or id=$2 ";
-    response = await database.query(text, [jug1, jug2]);
-    var nombre1 = response.rows[0].nombre;
-    var nombre2 = response.rows[1].nombre;
-
-    text = "select dispositivo from usuarios where nombre=$1";
-    response = await database.query(text, [nombre1]);
-    var dispositivo1 = response.rows[0].dispositivo;
-
-    var partidosFaltantes = horario - 2;
-    var msg;
-    if (partidosFaltantes == 0)
-      msg = ". APRESÚRATE, TU PARTIDO EMPEZARÁ PRONTO!";
-    else
-      msg = ". Preparate!";
-
-    var message = {
-      to: dispositivo1,
-      notification: {
-        title: "TORNEO DE TENIS",
-        body: "Partidos faltantes para tu juego: " + partidosFaltantes.toString() + msg
-      },
-      data: {
-        comida: 'nada',
-      }
-    };
-
-    fcm.send(message, async function (err, response) {
-      if (err) {
-        console.log("Hubo un error " + err);
-      } else {
-        console.log("Mensaje enviado");
-      }
-    });
-
-    res.status(200).json(response.rows);
-  } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
-  }
-}
 const getTorneos = async (req, res) => {
   try {
     const response = await database.query("select * from torneos");
-    res.status(200).json(response.rows);
-  } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" });
-  }
-}
-
-const getTorneo = async (req, res) => {
-  try {
-
-    //obteniendo la categoria del jugador de su ultima inscripcion
-    const text = "select max(fecha_inscripcion), categorium_id from jugadors where ci=$1 group by categorium_id";
-    const values = [req.params.ci];
-    const response = await database.query(text, values);
-    if (!response.rows[0]) {
-      res.status(200).json([]);
-    }
-    const data = response.rows[0];
-    const idCategoria = [data.categorium_id];
-
-    const text2 = "select torneo_id from categoria where id=$1";
-    const response2 = await database.query(text2, idCategoria);
-    const data2 = response2.rows[0];
-    const idTorneo = [data2.torneo_id];
-
-
-    const text3 = "select * from torneos where id=$1";
-    const response3 = await database.query(text3, idTorneo);
-    var today = new Date();
-    var currentDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    const dateTorneo = response3.rows[0].fecha_fin;
-    var finishDateTorneo = dateTorneo.getFullYear() + '-' + (dateTorneo.getMonth() + 1) + '-' + dateTorneo.getDate();
-
-    //si el torneo ya termino no retorna nada
-    if (finishDateTorneo > currentDate) {
-      res.status(200).json(response3.rows);
-    } else {
-      res.status(200).json([]);
-    }
-  } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" });
-  }
-}
-//dgh3YaYC8aw:APA91bEvgFcc5Uena0STxfqWUhQRLHlWjEdxXVEC69Yv4vavlYazPUv_luvnArg7k9aGDAEm7-B60_1cyCBgg8OUmk1PCkfg-rj5olWix7A-JcJp1trvY6uppzM-YNBle0jYwlq0hFag
-//cc2CUrcIkow:APA91bFNYav7wb4a-IVb83TtvJP17MtbCZW_iAHN4VgHXUQQqBXSZ95iYZfuetxUvhT-m3Fi3a-6BBqaVi90WwvMXNdfeLUtNrtooKtgunJ6idlvP9xKdPB9K5g5HIjlvesgg-G0rg9j
-
-const sendMessage = async (req, res) => {
-  try {
-    const description = req.body.description;
-    const title = req.body.title;
-    const dispositivo = req.body.dispositivo;
-    var message = {
-      // registration_ids: ['ckcNPj4mieE:APA91bGhOCzdyCucv6LT6ev_py2XbDkIKsQoVw4khmdlgyWkUpngYN2vda9_h_Qg5Z-gNgTnAN5zMELWgak9nyOC8HKpkTc7CcOsD9hbe_rNBai60Lw8psZLuxkrfUhvbDOI75231G3y','cja-cxm_gHE:APA91bGeWG-Y4zVqHNw38VXmKw2ZC7FilnicMTzR9783UIDibFStI512teXEM0CmzDlU-uFFvvxF2hmGRKUvlNIDJwucHVe8glkQF8X5_ZCyHYyOGlwdoReSdhyy4CAcKwDbuibb4dB7'],
-      to: dispositivo,
-      notification: {
-        title: title,
-        body: description
-      },
-      data: {
-        comida: 'quiero pollo chester',
-      }
-    };
-
-    fcm.send(message, async function (err, response) {
-      if (err) {
-        res.status(500).send({ msg: "Ocurrio un error" });
-      } else {
-        var data = JSON.parse(response);
-        var id = data.results[0].message_id;
-        var enviado = new Date();
-        const text = "insert into notificaciones values ($1, $2, $3, $4, $5, $6, $7, $8)";
-
-        const id_torneo = parseInt(req.body.id_torneo);
-        const id_categoria = parseInt(req.body.id_categoria);
-        // const id_partido = parseInt(req.body.id_partido);
-
-        await database.query(text, [id, id_torneo, id_categoria, 0, description, title, dispositivo, enviado]);
-        res.status(200).json({ msg: "Notificación enviada" });
-        console.log("Mensaje enviado");
-      }
-    });
-
-  } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error " + error });
-  }
-
-}
-
-const getNotifications = async (req, res) => {
-  try {
-    const response = await database.query("select * from notificaciones");
     res.status(200).json(response.rows);
   } catch (error) {
     res.status(500).send({ msg: "Ocurrio un error" });
@@ -222,26 +35,6 @@ const getCategorias = async (req, res) => {
   }
 }
 
-// const getPartidosCuadro = async (req, res) => {
-//   try {
-//     const text = "select partidos.id, partidos.numero_cancha, etapa, score_jugador1, score_jugador2, hora_inicio, partidos.jugador_uno_id, partidos.jugador_dos_id, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, cuadros, jugadors jugadores1, jugadors jugadores2 where partidos.cuadro_id=cuadros.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and cuadros.categorium_id=$1 ";
-//     const values = [req.params.id];
-//     const response = await database.query(text, values);
-//     res.status(200).json(response.rows);
-//   } catch (error) {
-//     res.status(500).send({ msg: "Ocurrio un error" });
-//   }
-// }
-// const getPartidosCuadro = async (req, res) => {
-//   try {
-//     const text = "select * from cuadros inner join partidos on cuadros.id=partidos.cuadro_id where categorium_id=$1 order by partidos.numero";
-//     const values = [req.params.id];
-//     const response = await database.query(text, values);
-//     res.status(200).json(response.rows);
-//   } catch (error) {
-//     res.status(500).send({ msg: "Ocurrio un error" });
-//   }
-// }
 const getPartidosCuadro = async (req, res) => {
   try {
     const values = [req.params.id];
@@ -260,75 +53,8 @@ const getPartidosCuadro = async (req, res) => {
   }
 }
 
-// const getSets = async (req, res) => {
-//   try {
-//     const text = "select * from sets where id_partido=$1";
-//     const values = [req.params.id];
-//     const response = await database.query(text, values);
-//     res.status(200).json(response.rows);
-//   } catch (error) {
-//     res.status(500).send({ msg: "Ocurrio un error" });
-//   }
-// }
-
-// const newSet = async (req, res) => {
-//   try {
-//     const text = "insert into sets values ($1, $2, $3, $4, $5)";
-//     var id = new Date().valueOf();
-//     const partidoId = parseInt(req.body.idPartido);
-//     const scoreJug1 = parseInt(req.body.scoreJug1);
-//     const scoreJug2 = parseInt(req.body.scoreJug2);
-//     const nroSet = req.body.nroSet;
-
-//     await database.query(text, [id, partidoId, scoreJug1, scoreJug2, nroSet]);
-//     res.status(200).json({ msg: "Score guardado" });
-//   } catch (error) {
-//     res.status(500).send({ msg: "Ocurrio un error" });
-//   }
-// }
-// const deleteSet = async (req, res) => {
-//   try {
-//     const text = "delete from sets where id=$1";
-//     const value = [req.params.id];
-
-//     await database.query(text, value);
-//     res.status(200).json({ msg: "Score eliminado" });
-//   } catch (error) {
-//     res.status(500).send({ msg: "Ocurrio un error" });
-//   }
-// }
-
-// const updateSet = async (req, res) => {
-//   try {
-//     const text = "update sets set score_jug_1=$1, score_jug_2=$2, nro_set=$3 where id=$4";
-//     const scoreJug1 = parseInt(req.body.scoreJug1);
-//     const scoreJug2 = parseInt(req.body.scoreJug2);
-//     const nroSet = req.body.nroSet;
-//     const idSet = parseInt(req.body.idSet);
-
-//     await database.query(text, [scoreJug1, scoreJug2, nroSet, idSet]);
-//     res.status(200).json({ msg: "Score actualizado" });
-//   } catch (error) {
-//     res.status(500).send({ msg: "Ocurrio un error " });
-//   }
-// }
-
-// const getPartidosGrupo = async (req, res) => {
-//   try {
-//     const text = "select partidos.id, partidos.numero_cancha, grupos.nombre, score_jugador1, score_jugador2, hora_inicio, partidos.jugador_uno_id, partidos.jugador_dos_id, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, grupos, jugadors jugadores1, jugadors jugadores2 where partidos.grupo_id=grupos.id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and grupos.categorium_id=$1 ";
-//     const values = [req.params.id];
-//     const response = await database.query(text, values);
-//     res.status(200).json(response.rows);
-//   } catch (error) {
-//     res.status(500).send({ msg: "Ocurrio un error" });
-//   }
-// }
-
-// "[{\"jugador_uno\":6,\"jugador_dos\":0},{\"jugador_uno\":6,\"jugador_dos\":0}]"
-
 const updateResult = async (req, res) => {
   try {
-    // const text = "update partidos set marcador=$1 where id=$2";
     const text = `update partidos set marcador=$1 where id=$2`;
     const partidoId = req.body.idPartido;
     const score = req.body.score;
@@ -423,7 +149,6 @@ const login = async (req, res) => {
 
 const getProg = async (req, res) => {
   try {
-    // const text = "select * from ronda_torneos right join partidos on ronda_torneos.id=partidos.ronda_torneo_id where torneo_id=$1 order by partidos.numero";
     const text = "select partidos.id, partido_type, partidos.hora_inicio, hora_fin, hora_inico_mv, numero_cancha, ronda_torneo_id, partido_terminado, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, ronda_torneos, jugadors jugadores1, jugadors jugadores2 where ronda_torneos.id=partidos.ronda_torneo_id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and ronda_torneos.torneo_id=$1 order by partidos.numero";
     const values = [req.params.id];
     const response = await database.query(text, values);
@@ -441,10 +166,6 @@ module.exports = {
   newUser,
   login,
   getProg,
-  getTorneo,
-  sendMessage,
   updateResult,
-  getNotifications,
   fullTime,
-  notificarSgtJug
 }
