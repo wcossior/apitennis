@@ -23,6 +23,16 @@ const getTorneos = async (req, res) => {
     res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
+const getRondaTorneos = async (req, res) => {
+  try {
+    const text = "select * from ronda_torneos where torneo_id=$1";
+    const values = [req.params.id];
+    const response = await database.query(text, values);
+    res.status(200).json(response.rows);
+  } catch (error) {
+    res.status(500).send({ msg: "Ocurrio un error" });
+  }
+}
 
 const getCategorias = async (req, res) => {
   try {
@@ -154,4 +164,5 @@ module.exports = {
   getProg,
   updateResult,
   fullTime,
+  getRondaTorneos
 }
