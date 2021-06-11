@@ -15,6 +15,103 @@ const database = new Client({
 
 database.connect();
 
+// function contador () {
+//   try {
+//     const description = "Cada minuto";
+//     const title = "Mensaje programado js";
+//     const dispositivo = 'cja-cxm_gHE:APA91bGeWG-Y4zVqHNw38VXmKw2ZC7FilnicMTzR9783UIDibFStI512teXEM0CmzDlU-uFFvvxF2hmGRKUvlNIDJwucHVe8glkQF8X5_ZCyHYyOGlwdoReSdhyy4CAcKwDbuibb4dB7';
+//     var message = {
+//       to: dispositivo,
+//       notification: {
+//         title: title,
+//         body: description
+//       },
+//       data: {
+//         comida: 'quiero pollo chester',
+//       }
+//     };
+
+//     fcm.send(message, async function (err, response) {
+//       if (err) {
+//         console.log("Hubo un error "+ err);
+//       } else {
+//         console.log("Mensaje enviado");
+//       }
+//     });
+
+//   } catch (error) {
+//     console.log("Hubo un error "+ error);
+//   }
+// }
+// setInterval(contador, 60000);
+
+
+
+
+const notificarSgtJug = async (req, res) => {
+  try {
+    // const text = "select partidos.id, partido_type, partidos.hora_inicio, hora_fin, hora_inico_mv, numero_cancha, ronda_torneo_id, partido_terminado, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, ronda_torneos, jugadors jugadores1, jugadors jugadores2 where ronda_torneos.id=partidos.ronda_torneo_id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and ronda_torneos.torneo_id=$1 ";
+    var text = "select numero_cancha, ronda_torneos.numero from partidos, ronda_torneos where partidos.ronda_torneo_id=ronda_torneos.id and partidos.id=$1 ";
+    var idPartido = [req.body.idPartido];
+    var idTorneo = [req.body.idTorneo];
+    var response = await database.query(text, idPartido);
+    var cancha = response.rows[0].numero_cancha;
+    var horario = response.rows[0].numero;
+    
+    text = "select * from ronda_torneos where torneo_id=$1 ";
+    response = await database.query(text, idTorneo);
+    var cantidadHorarios = response.rows.length;
+
+    for (let index = horario; index < cantidadHorarios; index++) {
+      
+    }
+
+    horario = parseInt(horario) + 1;
+    text = "select jugador_uno_id, jugador_dos_id from partidos where numero_cancha=$1 and ronda_torneo_id=$2 ";
+    response = await database.query(text, [cancha, horario]);
+    var jug1 = response.rows[0].jugador_uno_id;
+    var jug2 = response.rows[0].jugador_dos_id;
+
+    text = "select nombre from jugadors where id=$1 or id=$2 ";
+    response = await database.query(text, [jug1, jug2]);
+    var nombre1 = response.rows[0].nombre;
+    var nombre2 = response.rows[1].nombre;
+
+    text = "select dispositivo from usuarios where nombre=$1";
+    response = await database.query(text, [nombre1]);
+    var dispositivo1 = response.rows[0].dispositivo;
+
+    var partidosFaltantes = horario - 2;
+    var msg;
+    if (partidosFaltantes == 0)
+      msg = ". APRESÚRATE, TU PARTIDO EMPEZARÁ PRONTO!";
+    else
+      msg = ". Preparate!";
+
+    var message = {
+      to: dispositivo1,
+      notification: {
+        title: "TORNEO DE TENIS",
+        body: "Partidos faltantes para tu juego: " + partidosFaltantes.toString() + msg
+      },
+      data: {
+        comida: 'nada',
+      }
+    };
+
+    fcm.send(message, async function (err, response) {
+      if (err) {
+        console.log("Hubo un error " + err);
+      } else {
+        console.log("Mensaje enviado");
+      }
+    });
+
+    res.status(200).json(response.rows);
+  } catch (error) {
+    res.status(500).send({ msg: "Ocurrio un error" + error });
+  }
+}
 const getTorneos = async (req, res) => {
   try {
     const response = await database.query("select * from torneos");
@@ -95,6 +192,7 @@ const sendMessage = async (req, res) => {
 
         await database.query(text, [id, id_torneo, id_categoria, 0, description, title, dispositivo, enviado]);
         res.status(200).json({ msg: "Notificación enviada" });
+        console.log("Mensaje enviado");
       }
     });
 
@@ -347,5 +445,6 @@ module.exports = {
   sendMessage,
   updateResult,
   getNotifications,
-  fullTime
+  fullTime,
+  notificarSgtJug
 }
