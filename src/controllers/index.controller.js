@@ -25,7 +25,7 @@ const getTorneos = async (req, res) => {
 }
 const getRondaTorneos = async (req, res) => {
   try {
-    const text = "select * from ronda_torneos where torneo_id=$1";
+    const text = "select * from ronda_torneos where torneo_id=$1 order by numero";
     const values = [req.params.id];
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
