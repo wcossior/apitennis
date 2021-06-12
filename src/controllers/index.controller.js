@@ -69,7 +69,8 @@ const updateResult = async (req, res) => {
 }
 const fullTime = async (req, res) => {
   try {
-    const fecha = new Date();
+    var fecha = new Date();
+    fecha.setHours(fecha.getHours() - 4);
     const text = "update partidos set marcador=$1, hora_fin=$2, partido_terminado=true where id=$3";
     const partidoId = req.body.idPartido;
     const score = req.body.score;
@@ -96,6 +97,7 @@ const newUser = async (req, res) => {
     const nombre = req.body.nombre;
     const email = req.body.email;
     const fecha = new Date();
+    fecha.setHours(fecha.getHours() - 4);
     var password = req.body.password;
     var text = "select * from usuarios where email=$1";
     var response = await database.query(text, [email]);
@@ -162,7 +164,7 @@ const partidoGrupo = async (req, res) => {
     const response = await database.query(text, [idCategoria, idPartido]);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error});
+    res.status(500).send({ msg: "Ocurrio un error" + error });
   }
 }
 const partidoCuadro = async (req, res) => {
@@ -173,7 +175,7 @@ const partidoCuadro = async (req, res) => {
     const response = await database.query(text, [idCategoria, idPartido]);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error});
+    res.status(500).send({ msg: "Ocurrio un error" + error });
   }
 }
 
