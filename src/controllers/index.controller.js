@@ -41,7 +41,7 @@ const getCategorias = async (req, res) => {
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 
@@ -52,7 +52,7 @@ const getPartidosCuadro = async (req, res) => {
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 
@@ -64,7 +64,7 @@ const updateResult = async (req, res) => {
     await database.query(text, [JSON.stringify(score), partidoId]);
     res.status(200).json({ msg: "Marcador guardado" });
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error " + error });
+    res.status(500).send({ msg: "Ocurrio un error " });
   }
 }
 const fullTime = async (req, res) => {
@@ -76,7 +76,7 @@ const fullTime = async (req, res) => {
     await database.query(text, [JSON.stringify(score), fecha, partidoId]);
     res.status(200).json({ msg: "Partido finalizado con exito" });
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error " + error });
+    res.status(500).send({ msg: "Ocurrio un error " });
   }
 }
 const getPartidosGrupo = async (req, res) => {
@@ -86,7 +86,7 @@ const getPartidosGrupo = async (req, res) => {
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 
@@ -150,7 +150,7 @@ const getProg = async (req, res) => {
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 
