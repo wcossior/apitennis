@@ -61,7 +61,7 @@ const updateResult = async (req, res) => {
     const text = `update partidos set marcador=$1 where id=$2`;
     const partidoId = req.body.idPartido;
     const score = req.body.score;
-    await database.query(text, [score, partidoId]);
+    await database.query(text, [JSON.stringify(score), partidoId]);
     res.status(200).json({ msg: "Marcador guardado" });
   } catch (error) {
     res.status(500).send({ msg: "Ocurrio un error " + error });
