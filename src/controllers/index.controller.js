@@ -96,6 +96,7 @@ const newUser = async (req, res) => {
     const ci = req.body.ci;
     const nombre = req.body.nombre;
     const email = req.body.email;
+    const dispositivo = req.body.dispositivo;
     const fecha = new Date();
     fecha.setHours(fecha.getHours() - 4);
     var password = req.body.password;
@@ -105,9 +106,9 @@ const newUser = async (req, res) => {
     if (response.rows.length != 0) {
       res.status(400).json({ msg: "Este email ya esta en uso" });
     } else {
-      var text = "insert into usuarios (email, encrypted_password, created_at, updated_at, ci, nombre, rol) values ($1, $2, $3, $4, $5, $6, 'Jugador')";
+      var text = "insert into usuarios (email, encrypted_password, created_at, updated_at, ci, nombre, rol, dispositivos) values ($1, $2, $3, $4, $5, $6, 'Jugador', $7)";
       password = await bcrypt.hash(password, 10);
-      var response = await database.query(text, [email, password, fecha, fecha, ci, nombre]);
+      var response = await database.query(text, [email, password, fecha, fecha, ci, nombre, [dispositivo]]);
       res.status(200).json({ msg: "Cuenta creada exitosamente!" });
     }
   } catch (e) {
@@ -119,6 +120,7 @@ const login = async (req, res) => {
   try {
     const email = req.body.email;
     const passId = req.body.password;
+    const dispositivo = req.body.dispositivo;
 
     var text = "select * from usuarios where email=$1";
     var response = await database.query(text, [email]);
@@ -128,6 +130,15 @@ const login = async (req, res) => {
       let match = await bcrypt.compare(passId, user.encrypted_password);
       if (match) {
         let tokenReturn = await token.encode(user.ci);
+        text = "select dispositivos from usuarios where email=$1";
+        response = await database.query(text, [email]);
+
+        var dispositivos = response.rows[0].dispositivos;
+        var seRegistro = dispositivos.includes(dispositivo);
+        if (!seRegistro) {
+          text = "update usuarios set dispositivos = array_cat(dispositivos, $1) where email=$2";
+          response = await database.query(text,[[dispositivo], email]);
+        }
         res.status(200).json({ user, tokenReturn });
       } else {
         res.status(404).send({
@@ -140,7 +151,7 @@ const login = async (req, res) => {
     }
   }
   catch (e) {
-    res.status(500).send({ msg: "Ocurrio un error" });
+    res.status(500).send({ msg: "Ocurrio un error" + e });
   }
 
 }
