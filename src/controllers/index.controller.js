@@ -8,7 +8,6 @@ var fcm = new FCM(serverKey);
 
 
 const database = new Client({
-  // connectionString: "postgres://ucralauolpfuxc:38afec102b9182a320e2c9afe515a1b6723d307eda29dc7f175037cb693b9649@ec2-54-164-134-207.compute-1.amazonaws.com:5432/d8god16o1u8tk",
   connectionString: "postgres://otzjcoeswezxpk:4fa2f79da23442fb255dcfebd8910b2b57f31484414f102ebd0e167df5e650fe@ec2-54-166-167-192.compute-1.amazonaws.com:5432/dfqineasdsbne5",
   ssl: { rejectUnauthorized: false }
 });
@@ -37,6 +36,16 @@ const getRondaTorneos = async (req, res) => {
 const getCategorias = async (req, res) => {
   try {
     const text = "select * from categoria where torneo_id=$1 and categoria_type='Singles'";
+    const values = [req.params.id];
+    const response = await database.query(text, values);
+    res.status(200).json(response.rows);
+  } catch (error) {
+    res.status(500).send({ msg: "Ocurrio un error" });
+  }
+}
+const getPlayersFromCategory = async (req, res) => {
+  try {
+    const text = "select nombre, club from jugadors where categorium_id=$1";
     const values = [req.params.id];
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
@@ -151,14 +160,14 @@ const login = async (req, res) => {
     }
   }
   catch (e) {
-    res.status(500).send({ msg: "Ocurrio un error" + e });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 
 }
 
 const getProg = async (req, res) => {
   try {
-    const text = "select partidos.id, partido_type, partidos.hora_inicio, hora_fin, hora_inico_mv, numero_cancha, ronda_torneo_id, partido_terminado, jugadores1.nombre as jug1, jugadores2.nombre as jug2 from partidos, ronda_torneos, jugadors jugadores1, jugadors jugadores2 where ronda_torneos.id=partidos.ronda_torneo_id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and ronda_torneos.torneo_id=$1 order by partidos.numero";
+    const text = "select partidos.id, partido_type, partidos.hora_inicio, hora_fin, hora_inico_mv, numero_cancha, ronda_torneo_id, partido_terminado, jugadores1.nombre as jug1, jugadores2.nombre as jug2, categoria.nombre from partidos, ronda_torneos, categoria, jugadors jugadores1, jugadors jugadores2 where ronda_torneos.id=partidos.ronda_torneo_id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and ronda_torneos.torneo_id=$1 and jugadores1.categorium_id=categoria.id order by partidos.numero";
     const values = [req.params.id];
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
@@ -175,7 +184,7 @@ const partidoGrupo = async (req, res) => {
     const response = await database.query(text, [idCategoria, idPartido]);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 const partidoCuadro = async (req, res) => {
@@ -186,7 +195,7 @@ const partidoCuadro = async (req, res) => {
     const response = await database.query(text, [idCategoria, idPartido]);
     res.status(200).json(response.rows);
   } catch (error) {
-    res.status(500).send({ msg: "Ocurrio un error" + error });
+    res.status(500).send({ msg: "Ocurrio un error" });
   }
 }
 
@@ -202,5 +211,6 @@ module.exports = {
   fullTime,
   getRondaTorneos,
   partidoGrupo,
-  partidoCuadro
+  partidoCuadro,
+  getPlayersFromCategory
 }

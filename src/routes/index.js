@@ -1,10 +1,11 @@
 const { Router } = require("express");
 const router = Router();
 
-const { getTorneos, getRondaTorneos, getCategorias, getPartidosCuadro, getPartidosGrupo, login, newUser, getProg, updateResult, fullTime, partidoGrupo, partidoCuadro} = require("../controllers/index.controller");
+const { getTorneos, getRondaTorneos, getCategorias, getPartidosCuadro, getPartidosGrupo, login, newUser, getProg, updateResult, fullTime, partidoGrupo, partidoCuadro, getPlayersFromCategory} = require("../controllers/index.controller");
 
 router.get("/torneos", getTorneos);
 router.get("/rondatorneos/:id", getRondaTorneos);
+router.get("/players/:id", getPlayersFromCategory);
 router.get("/programacion/:id", getProg);
 router.get("/categorias/:id", getCategorias);
 router.get("/partidoscuadro/:id", getPartidosCuadro);
