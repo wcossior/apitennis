@@ -167,7 +167,7 @@ const login = async (req, res) => {
 
 const getProg = async (req, res) => {
   try {
-    const text = "select partidos.id, partido_type, partidos.hora_inicio, hora_fin, hora_inico_mv, numero_cancha, ronda_torneo_id, partido_terminado, jugadores1.nombre as jug1, jugadores2.nombre as jug2, categoria.nombre from partidos, ronda_torneos, categoria, jugadors jugadores1, jugadors jugadores2 where ronda_torneos.id=partidos.ronda_torneo_id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and ronda_torneos.torneo_id=$1 and jugadores1.categorium_id=categoria.id order by partidos.numero";
+    const text = "select partidos.id, partido_type, partidos.hora_inicio, hora_fin, hora_inico_mv, numero_cancha, ronda_torneo_id, partido_terminado, jugadores1.nombre as jug1, jugadores2.nombre as jug2, categoria.nombre, partidos.marcador from partidos, ronda_torneos, categoria, jugadors jugadores1, jugadors jugadores2 where ronda_torneos.id=partidos.ronda_torneo_id and jugadores1.id=partidos.jugador_uno_id and jugadores2.id=partidos.jugador_dos_id and ronda_torneos.torneo_id=$1 and jugadores1.categorium_id=categoria.id order by partidos.numero";
     const values = [req.params.id];
     const response = await database.query(text, values);
     res.status(200).json(response.rows);
