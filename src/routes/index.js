@@ -1,24 +1,20 @@
 const { Router } = require("express");
 const router = Router();
 
-const { getTorneos, getCategorias, getCuadros, getGrupos, getPartidosCuadro, getPartidosGrupo, updatePartidos, login, newUser, getProg, getTorneo, sendMessage, getSets, newSet, updateSet, deleteSet,getNotifications } = require("../controllers/index.controller");
+const { getTorneos, getRondaTorneos, getCategorias, getPartidosCuadro, getPartidosGrupo, login, newUser, getProg, updateResult, fullTime, partidoGrupo, partidoCuadro, getPlayersFromCategory} = require("../controllers/index.controller");
 
 router.get("/torneos", getTorneos);
-router.get("/notifications", getNotifications);
-router.get("/torneo/:ci", getTorneo);
+router.get("/rondatorneos/:id", getRondaTorneos);
+router.get("/players/:id", getPlayersFromCategory);
 router.get("/programacion/:id", getProg);
 router.get("/categorias/:id", getCategorias);
-router.get("/cuadros/:id", getCuadros);
-router.get("/grupos/:id", getGrupos);
 router.get("/partidoscuadro/:id", getPartidosCuadro);
-router.get("/sets/:id", getSets);
+router.get("/partidoscuadro/:id/:idpartido", partidoCuadro);
 router.get("/partidosgrupo/:id", getPartidosGrupo);
-router.put("/partidos/:id/:scoreJug1/:scoreJug2", updatePartidos);
+router.get("/partidosgrupo/:id/:idpartido", partidoGrupo);
 router.post("/login", login);
 router.post("/newUser", newUser);
-router.post("/sendMessage", sendMessage);
-router.post("/newSet", newSet);
-router.put("/updateSet", updateSet);
-router.delete("/deleteSet/:id", deleteSet);
+router.put("/actualizarResultado", updateResult);
+router.put("/partidoTerminado", fullTime);
 
 module.exports = router;
