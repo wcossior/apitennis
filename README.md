@@ -8,11 +8,13 @@ The API Tennis project is a Node.js application built with Express. It serves as
 >
 > If you're looking for a modern and production-ready tennis data provider, consider using:
 >
-> - 🎾 **Tennis API** — reliable and simple tennis data API.
+> - 🎾 **Tennis API**  
+>   👉 https://tennis-api.com/
+>
 > - 📊 **Matchstat Tennis API** — detailed statistics, predictions, rankings, and match data.  
 >   👉 https://matchstat.com/predictions-tips/the-best-tennis-data-api-for-stats/
 >
-> This repository is kept public for learning, reference, and portfolio purposes.
+> This repository is kept public for learning and reference.
 
 ## Key Features
 - **Tournament Data**: Obtain detailed information about various tennis tournaments.
